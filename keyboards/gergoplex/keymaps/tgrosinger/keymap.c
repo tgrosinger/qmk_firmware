@@ -16,35 +16,33 @@
 
 // Combos
 enum combos {
-  QW,WE,AS,SD,DF,XC,OP,CV,
+  QW,WE,SD,DF,IO,OP,CV,
   UI,HJ,JK,KL,MC,NM,
-  FV,GB,HN,
-  SDJK
+  FV,GB,HN
 };
 
 // NOTE: If you're using MT,LT or anything you must
 // define it here. Note this if you change your layout!
 /* Keymap 0: Basic layer
  *
- * ,-----------------------------.       ,--------------------------------.
- * |      `    ESC    |     |     |      |     |    ESC    |    BSLH      |
- * |------+-----+-----+-----+-----|      |-----+--------------------------|
- * |      |   BSPC   TAB    |     |      |    LES   COLN  GRT    |        |
- * |------+-----+-----+--RMB+-LMB-|      |-ENT----------------------------|
- * |      |   MINS   ENT    |     |      |    QUO   UNDR   |     |        |
- * `------+-----+-----+-----+-----'      `--------------------------------'
- *  .-------------------------.           .-----------------.
- *  |        |       |        |           |        |    |   |
- *  '-------------------------'           '-----------------'
+ * ,-----------------------------.      ,-----------------------------.
+ * |     `    ESC    |     |     |      |     |    MINS   |    BSLH   |
+ * |-----+-----+-----+-----+-----|      |-----+-----------------------|
+ * |     |   BSPC   TAB    |     |      |    LES   COLN  GRT    |     |
+ * |-----+-----+-----+--RMB+-LMB-|      |-ENT-------------------------|
+ * |     |     |    ENT    |     |      |    QUO   UNDR   |     |     |
+ * `-----+-----+-----+-----+-----'      `-----------------------------'
+ *     .-------------------------.           .-----------------.
+ *     |        |       |        |           |        |    |   |
+ *     '-------------------------'           '-----------------'
  */
 const uint16_t PROGMEM qw_combo[] = {KC_Q, KC_W, COMBO_END};
 const uint16_t PROGMEM we_combo[] = {KC_W, KC_E, COMBO_END};
-//const uint16_t PROGMEM as_combo[] = {MT(MOD_LCTL, KC_A), KC_S, COMBO_END};
 const uint16_t PROGMEM sd_combo[] = {KC_S, KC_D, COMBO_END};
 const uint16_t PROGMEM df_combo[] = {KC_D, KC_F, COMBO_END};
-const uint16_t PROGMEM xc_combo[] = {KC_X, KC_C, COMBO_END};
 const uint16_t PROGMEM cv_combo[] = {KC_C, KC_V, COMBO_END};
 
+const uint16_t PROGMEM io_combo[] = {KC_I, KC_O, COMBO_END};
 const uint16_t PROGMEM op_combo[] = {KC_O, KC_P, COMBO_END};
 const uint16_t PROGMEM ui_combo[] = {KC_U, KC_I, COMBO_END};
 const uint16_t PROGMEM hj_combo[] = {KC_H, KC_J, COMBO_END};
@@ -61,12 +59,11 @@ combo_t key_combos[COMBO_COUNT] = {
   // Horizontal Chords
   [QW] = COMBO(qw_combo, KC_GRV),
   [WE] = COMBO(we_combo, KC_ESC),
-  //[AS] = COMBO(as_combo, KC_ENT),
   [SD] = COMBO(sd_combo, KC_BSPC),
   [DF] = COMBO(df_combo, KC_TAB),
-  [XC] = COMBO(xc_combo, KC_MINS),
   [CV] = COMBO(cv_combo, KC_ENT),
 
+  [IO] = COMBO(io_combo, KC_MINS),
   [OP] = COMBO(op_combo, KC_BSLS),
   [UI] = COMBO(ui_combo, KC_ESC),
   [HJ] = COMBO(hj_combo, KC_LT),
@@ -96,6 +93,7 @@ enum custom_keycodes {
   TMUX_SP_HZ,
   VIM_CLIP_CP,
   VIM_CLIP_PST,
+  VIM_MACRO,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -180,6 +178,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         tap_code(KC_P);
       }
       break;
+    case VIM_MACRO:
+      if (record->event.pressed) {
+        tap_code16(S(KC_2));
+        tap_code(KC_Q);
+      }
+      break;
   }
   return true;
 }
@@ -187,20 +191,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap 0: Default layer
  * ,-----------------------------.       ,----------------------------------.
- * |  Q   |  W  |  E  |  R  |  T  |      |  Y  |  U  |  I  |  O    |    P   |
+ * |  Q   |  W  |  E  |  R  |  T  |      |  Y  |  U  |  I  |   O   |    P   |
  * |------+-----+-----+-----+-----|      |-----+-----+-----+-------+--------|
- * |CTRL/A|  S  |  D  |  F  |  G  |      |  H  |  J  |  K  |  L    | CTRL/; |
+ * |CTRL/A|  S  |  D  |  F  |  G  |      |  H  |  J  |  K  |   L   | CTRL/; |
  * |------+-----+-----+-----+-----|      |-----+-----+-----+-------+--------|
- * |ALT/Z |  X  |  C  |  V  |  B  |      |  N  |  M  |  <  | ALT/> | SHFT/? |
+ * |SHFT/Z|ALT/X|  C  |  V  |  B  |      |  N  |  M  |  <  | ALT/> | SHFT/? |
  * `------+-----+-----+------+----'      `----------------------------------'
  *           .-----------------.             .------------------.
  *           |GUI|SHFT|SPC(NUM)|             |SPC(SYM)|TMUX |TAB|
  *           '-----------------'             '------------------'
  */
 [BASE] = LAYOUT_gergoplex(
-    KC_Q,              KC_W, KC_E, KC_R, KC_T,    KC_Y, KC_U, KC_I,    KC_O,   KC_P, 
-    MT(MOD_LCTL, KC_A),KC_S, KC_D, KC_F, KC_G,    KC_H, KC_J, KC_K,    KC_L,   MT(MOD_LCTL, KC_SCLN),
-    MT(MOD_LALT, KC_Z),KC_X, KC_C, KC_V, KC_B,    KC_N, KC_M, KC_COMM, MT(MOD_LALT, KC_DOT), MT(MOD_RSFT, KC_SLSH),
+    KC_Q,              KC_W,               KC_E, KC_R, KC_T,    KC_Y, KC_U, KC_I,    KC_O,   KC_P, 
+    MT(MOD_LCTL, KC_A),KC_S,               KC_D, KC_F, KC_G,    KC_H, KC_J, KC_K,    KC_L,   MT(MOD_LCTL, KC_SCLN),
+    MT(MOD_LSFT, KC_Z),MT(MOD_LALT, KC_X), KC_C, KC_V, KC_B,    KC_N, KC_M, KC_COMM, MT(MOD_LALT, KC_DOT), MT(MOD_RSFT, KC_SLSH),
             
     KC_LGUI, KC_LSFT, LT(NUMB, KC_SPC),               // Left
     LT(SYMB, KC_SPC), MO(TMUX), MT(MOD_RSFT, KC_TAB)   // Right
@@ -265,19 +269,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     
 /* Keymap 4: Tmux navigation layer
  * ,--------------------------------.      ,---------------------------------------.
- * |      |     |     |     |       |      | Vi Ynk|       |       |       | Vi PT |
- * |------+-----+-----+-----+-------|      |-------+-------+-------+-------+-------|
- * |      | SCRL|     |     | SP VT |      | PN LT | PN DN | PN UP | PN RT | SP HZ |
- * |------+-----+-----+-----+-------|      |-------+-------+-------+-------+-------|
- * | ZOOM | KILL| NEW |     |       |      | W LT  |       |       | W RT  |       |
- * `------+-----+-----+-----+-------'      `---------------------------------------'
+ * | Vi Mcr |     |     |     | SP VT |      | Vi Ynk|       |       |       | Vi PT |
+ * |--------+-----+-----+-----+-------|      |-------+-------+-------+-------+-------|
+ * |        | SCRL|     |     |       |      | PN LT | PN DN | PN UP | PN RT | SP HZ |
+ * |--------+-----+-----+-----+-------|      |-------+-------+-------+-------+-------|
+ * |  ZOOM  | KILL| NEW |     |       |      | W LT  |       |       | W RT  |       |
+ * `--------+-----+-----+-----+-------'      `---------------------------------------'
  *          .-----------------.                   .-----------------.
  *          |     | HLD |     |                   |     |     |     |
  *          '-----------------'                   '-----------------'
  */
 [TMUX] = LAYOUT_gergoplex(
-    KC_NO,     KC_NO,       KC_NO,    KC_NO, KC_NO,           VIM_CLIP_CP, KC_NO,      KC_NO,      KC_NO,      VIM_CLIP_PST,
-    KC_NO,     TMUX_SCROLL, KC_NO,    KC_NO, TMUX_SP_VT,      TMUX_PN_LT,  TMUX_PN_DN, TMUX_PN_UP, TMUX_PN_RT, TMUX_SP_HZ,
+    VIM_MACRO, KC_NO,       KC_NO,    KC_NO, TMUX_SP_VT,      VIM_CLIP_CP, KC_NO,      KC_NO,      KC_NO,      VIM_CLIP_PST,
+    KC_NO,     TMUX_SCROLL, KC_NO,    KC_NO, KC_NO,           TMUX_PN_LT,  TMUX_PN_DN, TMUX_PN_UP, TMUX_PN_RT, TMUX_SP_HZ,
     TMUX_ZOOM, KC_NO,       TMUX_NEW, KC_NO, KC_NO,           TMUX_WN_LT,  KC_NO,      KC_NO,      TMUX_WN_RT, KC_NO,
                  KC_NO,KC_TRNS,KC_NO,                              KC_NO,KC_NO,KC_NO
     )
