@@ -8,15 +8,16 @@
 
 #include QMK_KEYBOARD_H
 
-#define BASE 0   // Default layer
-#define SYMB 1   // Symbols layer
-#define NUMB 2   // Numbers layer
-#define ARROWS 3 // Arrows and mouse layer
-#define TMUX 4   // TMUX Nav layer
+#define BASE 0    // Default layer
+#define COLEMAK 1 // Colemak Mod-DH layer
+#define SYMB 2    // Symbols layer
+#define NUMB 3    // Numbers layer
+#define ARROWS 4  // Arrows and mouse layer
+#define TMUX 5    // TMUX Nav layer
 
 // Combos
 enum combos {
-  QW,WE,SD,DF,IO,OP,CV,
+  QW,WE,SD,DF,IO,OP,CV,CD,
   UI,HJ,JK,KL,MC,NM,
   FV,GB,HN
 };
@@ -41,6 +42,7 @@ const uint16_t PROGMEM we_combo[] = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM sd_combo[] = {KC_S, KC_D, COMBO_END};
 const uint16_t PROGMEM df_combo[] = {KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM cv_combo[] = {KC_C, KC_V, COMBO_END};
+const uint16_t PROGMEM cd_combo[] = {KC_C, KC_D, COMBO_END};
 
 const uint16_t PROGMEM io_combo[] = {KC_I, KC_O, COMBO_END};
 const uint16_t PROGMEM op_combo[] = {KC_O, KC_P, COMBO_END};
@@ -62,6 +64,7 @@ combo_t key_combos[COMBO_COUNT] = {
   [SD] = COMBO(sd_combo, KC_BSPC),
   [DF] = COMBO(df_combo, KC_TAB),
   [CV] = COMBO(cv_combo, KC_ENT),
+  [CD] = COMBO(cd_combo, KC_ENT),
 
   [IO] = COMBO(io_combo, KC_MINS),
   [OP] = COMBO(op_combo, KC_BSLS),
@@ -184,6 +187,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         tap_code(KC_Q);
       }
       break;
+    /*
+    case LAYRMOD:
+      // Act as a mod key if held, or toggle a layer if tapped
+      // replace KC_LCTL with desired mod, and _TARGET with desired layer name / number
+      if (record->event.pressed) {
+        uint8_t key_timer = timer_read();
+        register_mods(MOD_BIT(KC_LCTL));
+      } else {
+        unregister_mods(MOD_BIT(KC_LCTL));
+        if (timer_elapsed(key_timer) < 200) {
+          layer_invert(_TARGET);
+        }
+      }
+      return false;
+      break;
+    */
   }
   return true;
 }
@@ -197,20 +216,41 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+-----+-----+-----+-----|      |-----+-----+-----+-------+--------|
  * |SHFT/Z|ALT/X|  C  |  V  |  B  |      |  N  |  M  |  <  | ALT/> | SHFT/? |
  * `------+-----+-----+------+----'      `----------------------------------'
- *           .-----------------.             .------------------.
- *           |GUI|SHFT|SPC(NUM)|             |SPC(SYM)|TMUX |TAB|
- *           '-----------------'             '------------------'
+ *           .-----------------.             .----------------------.
+ *           |GUI|SHFT|SPC(NUM)|             |SPC(SYM)|TMUX |COLEMAK|
+ *           '-----------------'             '----------------------'
  */
 [BASE] = LAYOUT_gergoplex(
     KC_Q,              KC_W,               KC_E, KC_R, KC_T,    KC_Y, KC_U, KC_I,    KC_O,   KC_P, 
     MT(MOD_LCTL, KC_A),KC_S,               KC_D, KC_F, KC_G,    KC_H, KC_J, KC_K,    KC_L,   MT(MOD_LCTL, KC_SCLN),
     MT(MOD_LSFT, KC_Z),MT(MOD_LALT, KC_X), KC_C, KC_V, KC_B,    KC_N, KC_M, KC_COMM, MT(MOD_LALT, KC_DOT), MT(MOD_RSFT, KC_SLSH),
             
-    KC_LGUI, KC_LSFT, LT(NUMB, KC_SPC),               // Left
-    LT(SYMB, KC_SPC), MO(TMUX), MT(MOD_RSFT, KC_TAB)   // Right
+    KC_LGUI, KC_LSFT, LT(NUMB, KC_SPC),       // Left
+    LT(SYMB, KC_SPC), MO(TMUX), DF(COLEMAK)   // Right
     ),
 
-/* Keymap 1: Symbols layer
+/* Keymap 1: Colemak layer
+ * ,-----------------------------.       ,----------------------------------.
+ * |  Q   |  W  |  F  |  P  |  B  |      |  J  |  L  |  U  |   Y   |    ;   |
+ * |------+-----+-----+-----+-----|      |-----+-----+-----+-------+--------|
+ * |CTRL/A|  R  |  S  |  T  |  G  |      |  M  |  N  |  E  |   I   | CTRL/O |
+ * |------+-----+-----+-----+-----|      |-----+-----+-----+-------+--------|
+ * |SHFT/Z|ALT/X|  C  |  D  |  V  |      |  K  |  H  |  <  | ALT/> | SHFT/? |
+ * `------+-----+-----+------+----'      `----------------------------------'
+ *           .-----------------.             .---------------------.
+ *           |GUI|SHFT|SPC(NUM)|             |SPC(SYM)|TMUX |QWERTY|
+ *           '-----------------'             '---------------------'
+ */
+[COLEMAK] = LAYOUT_gergoplex(
+    KC_Q,              KC_W,               KC_F, KC_P, KC_B,    KC_J, KC_L, KC_U,    KC_Y,   KC_SCLN,
+    MT(MOD_LCTL, KC_A),KC_R,               KC_S, KC_T, KC_G,    KC_M, KC_N, KC_E,    KC_I,   MT(MOD_LCTL, KC_O),
+    MT(MOD_LSFT, KC_Z),MT(MOD_LALT, KC_X), KC_C, KC_D, KC_V,    KC_K, KC_H, KC_COMM, MT(MOD_LALT, KC_DOT), MT(MOD_RSFT, KC_SLSH),
+            
+    KC_LGUI, KC_LSFT, LT(NUMB, KC_SPC),    // Left
+    LT(SYMB, KC_SPC), MO(TMUX), DF(BASE)   // Right
+    ),
+
+/* Keymap 2: Symbols layer
  * ,-----------------------------.       ,-------------------------------.
  * |  !   |  @  |  #  |  $  |  %  |      |  ^  |  &  |  *  |  +  |   =   |
  * |------+-----+-----+-----+-----|      |-----+-----+-----+-----+-------|
@@ -229,7 +269,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                    KC_NO, KC_DEL, MO(ARROWS),        KC_TRNS,  KC_NO, KC_NO
     ),
 
-/* Keymap 2: Number layer
+/* Keymap 3: Number layer
  * ,-----------------------------.       ,-------------------------------.
  * |  1   |  2  |  3  |  4  |  5  |      |  6  |  7  |  8  |  9  |   0   |
  * |------+-----+-----+-----+-----|      |-----+-----+-----+-----+-------|
@@ -248,7 +288,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                  KC_NO,KC_NO,KC_TRNS,             MO(ARROWS),KC_0,KC_NO
     ),
 
-/* Keymap 3: Arrows and mouse layer
+/* Keymap 4: Arrows and mouse layer
  * ,-----------------------------.       ,-------------------------------------------.
  * |      |     |     |     |     |      | SS PGDN | S PGDN | S PGUP | SS PGUP |     |
  * |------+-----+-----+-----+-----|      |---------+--------+--------+---------+-----|
@@ -267,7 +307,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                  KC_NO,KC_NO,KC_TRNS,              KC_TRNS,KC_NO,KC_NO
     ),
     
-/* Keymap 4: Tmux navigation layer
+/* Keymap 5: Tmux navigation layer
  * ,--------------------------------.      ,---------------------------------------.
  * | Vi Mcr |     |     |     | SP VT |      | Vi Ynk|       |       |       | Vi PT |
  * |--------+-----+-----+-----+-------|      |-------+-------+-------+-------+-------|
