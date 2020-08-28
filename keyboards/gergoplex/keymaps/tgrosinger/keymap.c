@@ -9,7 +9,7 @@
 #include QMK_KEYBOARD_H
 
 #define BASE 0    // Default layer
-#define COLEMAK 1 // Colemak Mod-DH layer
+#define WINDOWS 1 // Windows shortcuts layer
 #define SYMB 2    // Symbols layer
 #define NUMB 3    // Numbers layer
 #define ARROWS 4  // Arrows and mouse layer
@@ -217,7 +217,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |SHFT/Z|ALT/X|  C  |  V  |  B  |      |  N  |  M  |  <  | ALT/> | SHFT/? |
  * `------+-----+-----+------+----'      `----------------------------------'
  *           .-----------------.             .----------------------.
- *           |GUI|SHFT|SPC(NUM)|             |SPC(SYM)|TMUX |COLEMAK|
+ *           |GUI|SHFT|SPC(NUM)|             |SPC(SYM)|TMUX |WINDOWS|
  *           '-----------------'             '----------------------'
  */
 [BASE] = LAYOUT_gergoplex(
@@ -226,28 +226,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     MT(MOD_LSFT, KC_Z),MT(MOD_LALT, KC_X), KC_C, KC_V, KC_B,    KC_N, KC_M, KC_COMM, MT(MOD_LALT, KC_DOT), MT(MOD_RSFT, KC_SLSH),
             
     KC_LGUI, KC_LSFT, LT(NUMB, KC_SPC),       // Left
-    LT(SYMB, KC_SPC), MO(TMUX), DF(COLEMAK)   // Right
+    LT(SYMB, KC_SPC), MO(TMUX), MO(WINDOWS)   // Right
     ),
 
-/* Keymap 1: Colemak layer
- * ,-----------------------------.       ,----------------------------------.
- * |  Q   |  W  |  F  |  P  |  B  |      |  J  |  L  |  U  |   Y   |    ;   |
- * |------+-----+-----+-----+-----|      |-----+-----+-----+-------+--------|
- * |CTRL/A|  R  |  S  |  T  |  G  |      |  M  |  N  |  E  |   I   | CTRL/O |
- * |------+-----+-----+-----+-----|      |-----+-----+-----+-------+--------|
- * |SHFT/Z|ALT/X|  C  |  D  |  V  |      |  K  |  H  |  <  | ALT/> | SHFT/? |
- * `------+-----+-----+------+----'      `----------------------------------'
+/* Keymap 1: Windows layer
+ * ,------------------------------.       ,----------------------------------.
+ * |      |      |     |     |     |      |     |     |      |      |        |
+ * |------+------+-----+-----+-----|      |-----+-----+------+------+--------|
+ * |      |SCNSHT|     |     |     |      |D-Lft|W-Lft|W-Rght|D-Rght|        |
+ * |------+------+-----+-----+-----|      |-----+-----+------+------+--------|
+ * |      |      |     |     |     |      |     |     |      |      |        |
+ * `------+------+-----+------+----'      `----------------------------------'
  *           .-----------------.             .---------------------.
- *           |GUI|SHFT|SPC(NUM)|             |SPC(SYM)|TMUX |QWERTY|
+ *           |   |SHFT|        |             |        |     | HLD  |
  *           '-----------------'             '---------------------'
  */
-[COLEMAK] = LAYOUT_gergoplex(
-    KC_Q,              KC_W,               KC_F, KC_P, KC_B,    KC_J, KC_L, KC_U,    KC_Y,   KC_SCLN,
-    MT(MOD_LCTL, KC_A),KC_R,               KC_S, KC_T, KC_G,    KC_M, KC_N, KC_E,    KC_I,   MT(MOD_LCTL, KC_O),
-    MT(MOD_LSFT, KC_Z),MT(MOD_LALT, KC_X), KC_C, KC_D, KC_V,    KC_K, KC_H, KC_COMM, MT(MOD_LALT, KC_DOT), MT(MOD_RSFT, KC_SLSH),
+[WINDOWS] = LAYOUT_gergoplex(
+    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+    KC_NO, G(S(KC_S)), KC_NO, KC_NO, KC_NO,    G(C(KC_LEFT)), S(A(KC_TAB)), A(KC_TAB), G(C(KC_RGHT)), KC_NO,
+    KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,         KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
             
-    KC_LGUI, KC_LSFT, LT(NUMB, KC_SPC),    // Left
-    LT(SYMB, KC_SPC), MO(TMUX), DF(BASE)   // Right
+    KC_NO, KC_LSFT, KC_NO,    // Left
+    KC_NO, KC_NO,   KC_NO   // Right
     ),
 
 /* Keymap 2: Symbols layer

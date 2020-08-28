@@ -8,4 +8,5 @@ This keymap I created for the GergoPlex with a focus on:
 
 ## Firmware Building
 
+    ./util/qmk_install.sh
     make gergoplex:tgrosinger
