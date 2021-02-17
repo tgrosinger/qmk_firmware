@@ -1,11 +1,3 @@
-/* Good on you for modifying your layout! if you don't have
- * time to read the QMK docs, a list of keycodes can be found at
- *
- * https://github.com/qmk/qmk_firmware/blob/master/docs/keycodes.md
- *
- * There's also a template for adding new layers at the bottom of this file!
- */
-
 #include QMK_KEYBOARD_H
 
 #define BASE 0    // Default layer
@@ -17,8 +9,8 @@
 
 // Combos
 enum combos {
-  QW,WE,SD,DF,IO,OP,CV,CD,
-  UI,HJ,JK,KL,MC,NM,
+  WS,QW,SD,DF,IO,OP,CV,CD,
+  HJ,JK,KL,MC,NM,
   FV,GB,HN
 };
 
@@ -27,8 +19,8 @@ enum combos {
 /* Keymap 0: Basic layer
  *
  * ,-----------------------------.      ,-----------------------------.
- * |     `    ESC    |     |     |      |     |    MINS   |    BSLH   |
- * |-----+-----+-----+-----+-----|      |-----+-----------------------|
+ * |     `     |     |     |     |      |     |    MINS   |    BSLH   |
+ * |-----+----ESC----+-----+-----|      |-----+-----------------------|
  * |     |   BSPC   TAB    |     |      |    LES   COLN  GRT    |     |
  * |-----+-----+-----+--RMB+-LMB-|      |-ENT-------------------------|
  * |     |     |    ENT    |     |      |    QUO   UNDR   |     |     |
@@ -37,8 +29,8 @@ enum combos {
  *     |        |       |        |           |        |    |   |
  *     '-------------------------'           '-----------------'
  */
+const uint16_t PROGMEM ws_combo[] = {KC_W, KC_S, COMBO_END};
 const uint16_t PROGMEM qw_combo[] = {KC_Q, KC_W, COMBO_END};
-const uint16_t PROGMEM we_combo[] = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM sd_combo[] = {KC_S, KC_D, COMBO_END};
 const uint16_t PROGMEM df_combo[] = {KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM cv_combo[] = {KC_C, KC_V, COMBO_END};
@@ -60,7 +52,6 @@ const uint16_t PROGMEM hn_combo[] = {KC_H, KC_N, COMBO_END};
 combo_t key_combos[COMBO_COUNT] = {
   // Horizontal Chords
   [QW] = COMBO(qw_combo, KC_GRV),
-  [WE] = COMBO(we_combo, KC_ESC),
   [SD] = COMBO(sd_combo, KC_BSPC),
   [DF] = COMBO(df_combo, KC_TAB),
   [CV] = COMBO(cv_combo, KC_ENT),
@@ -68,7 +59,6 @@ combo_t key_combos[COMBO_COUNT] = {
 
   [IO] = COMBO(io_combo, KC_MINS),
   [OP] = COMBO(op_combo, KC_BSLS),
-  [UI] = COMBO(ui_combo, KC_ESC),
   [HJ] = COMBO(hj_combo, KC_LT),
   [JK] = COMBO(jk_combo, KC_COLN),
   [KL] = COMBO(kl_combo, KC_GT),
@@ -76,6 +66,7 @@ combo_t key_combos[COMBO_COUNT] = {
   [NM] = COMBO(nm_combo, KC_QUOT),
   
   // Vertical
+  [WS] = COMBO(ws_combo, KC_ESC),
   [GB] = COMBO(gb_combo, KC_BTN1),
   [FV] = COMBO(fv_combo, KC_BTN2),
   [HN] = COMBO(hn_combo, KC_ENT)
@@ -259,14 +250,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |      |     |     |     |     |      |     |     |     | F11 |  F12  |
  * `------+-----+-----+-----+-----'      `-------------------------------'
  *        .-----------------.                  .-----------------.
- *        |     | DEL | MO3 |                  | HLD |     |     |
+ *        |     | DEL | MO3 |                  | HLD | SPC |     |
  *        '-----------------'                  '-----------------'
  */
 [SYMB] = LAYOUT_gergoplex(
     KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,   KC_CIRC, KC_AMPR, KC_ASTR, KC_PLUS, KC_EQL,
     KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,     KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,
     KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,     KC_NO,   KC_NO,   KC_NO,   KC_F11,  KC_F12,
-                   KC_NO, KC_DEL, MO(ARROWS),        KC_TRNS,  KC_NO, KC_NO
+                   KC_NO, KC_DEL, MO(ARROWS),        KC_TRNS,  KC_SPC, KC_NO
     ),
 
 /* Keymap 3: Number layer
