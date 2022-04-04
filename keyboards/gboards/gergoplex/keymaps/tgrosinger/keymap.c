@@ -23,7 +23,6 @@ enum {
   _NUMB,   // Numbers
   _ARROWS, // Arrows and OS
   _TMUX,   // TMUX Nav layer
-  _POPOS,  // Gnome Shell, aka PopOS
 };
 
 
@@ -177,7 +176,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   * |SHFT/Z|ALT/X|  C  |  V  |  B  |      |  N  |  M  |  <  | ALT/> | SHFT/? |
   * `------+-----+-----+------+----'      `----------------------------------'
   *           .-----------------.             .----------------------.
-  *           |   |GUI |SPC(NUM)|             |SPC(SYM)|TMUX | PopOS |
+  *           |   |GUI |SPC(NUM)|             |SPC(SYM)|TMUX |       |
   *           '-----------------'             '----------------------'
   */
   [_ALPHA] = LAYOUT_split_3x5_3(
@@ -186,7 +185,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       MT(MOD_LSFT, KC_Z),MT(MOD_LALT, KC_X), KC_C, KC_V, KC_B,    KC_N, KC_M, KC_COMM, MT(MOD_LALT, KC_DOT), MT(MOD_RSFT, KC_SLSH),
               
       KC_NO,   KC_LGUI, LT(_NUMB, KC_SPC),       // Left
-      LT(_SYMB, KC_SPC), MO(_TMUX), MO(_POPOS)   // Right
+      LT(_SYMB, KC_SPC), MO(_TMUX), KC_NO        // Right
       ),
 
   /* Keymap 1: Symbols layer
@@ -212,7 +211,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   * ,------------------------------.      ,-------------------------------.
   * |  1   |  2  |  3  |  4  |  5  |      |  6  |  7  |  8  |  9  |   0   |
   * |------+-----+-----+-----+-----|      |-----+-----+-----+-----+-------|
-  * | CTRL |     |  (  |  )  |     |      |     |  4  |  7  |  6  |       |
+  * | CTRL |     |  (  |  )  |     |      |     |  4  |  5  |  6  |       |
   * |------+-----+-----+-----+-----|      |-----+-----+-----+-----+-------|
   * | SHFT |     |  [  |  ]  |     |      |     |  1  |  2  |  3  |   .   |
   * `------+-----+-----+-----+-----'      `-------------------------------'
@@ -263,24 +262,5 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_NO,     TMUX_SCROLL, KC_NO,    KC_NO, KC_NO,           TMUX_PN_LT,  TMUX_PN_DN, TMUX_PN_UP, TMUX_PN_RT, TMUX_SP_HZ,
       TMUX_ZOOM, KC_NO,       TMUX_NEW, KC_NO, KC_NO,           TMUX_WN_LT,  KC_NO,      KC_NO,      TMUX_WN_RT, KC_NO,
                   KC_NO,KC_NO,KC_NO,                              KC_NO,KC_TRNS,KC_NO
-      ),
-
-  /* Keymap 5: Gnome Shell (PopOS)
-  * ,------------------------------.      ,--------------------------------------.
-  * |      |     |     |     |     |      | MV-DWN| D-DWN | D-UP  | MV-UP | Flip |
-  * |------+-----+-----+-----+-----|      |-------+-------+-------+-------+------|
-  * |      |     |     |     |     |      |  W-L  | W-DWN | W-UP  | W-R   |      |
-  * |------+-----+-----+-----+-----|      |-------+-------+-------+-------+------|
-  * |      |     |     |     |     |      | Scrns | Apps  | Close |       |      |
-  * `------+-----+-----+-----+-----'      `--------------------------------------'
-  *        .-----------------.                   .-----------------.
-  *        |     |     |     |                   |     |     | HLD |
-  *        '-----------------'                   '-----------------'
-  */
-  [_POPOS] = LAYOUT_split_3x5_3(
-      KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,     SGUI(KC_J), LCTL(LGUI(KC_J)), LCTL(LGUI(KC_K)), SGUI(KC_K), LGUI(KC_O),
-      KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,     LGUI(KC_H), LGUI(KC_J),       LGUI(KC_K),       LGUI(KC_L), KC_NO,
-      KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,     LGUI(KC_D), LGUI(KC_A),       LGUI(KC_Q),       KC_NO,      KC_NO,
-                  KC_NO,KC_NO,KC_NO,                   KC_NO,KC_NO,KC_TRNS
       ),
 };
