@@ -7,10 +7,6 @@ COMB(dfTab,       KC_TAB,           KC_D, KC_F)
 COMB(cvEnter,     KC_ENT,           KC_C, KC_V)
 
 COMB(ioMinus,     KC_MINS,          KC_I, KC_O)
-COMB(opBackslash, KC_BSLS,          KC_O, KC_P)
-COMB(hjLess,      KC_LT,            KC_H, KC_J)
-COMB(klGreat,     KC_GT,            KC_K, KC_L)
-COMB(jkColon,     KC_COLN,          KC_J, KC_K)
 COMB(mcUnder,     KC_UNDS,          KC_M, KC_COMM)
 COMB(nmQuote,     KC_QUOT,          KC_N, KC_M)
 

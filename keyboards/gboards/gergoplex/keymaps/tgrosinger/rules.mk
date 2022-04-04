@@ -12,6 +12,8 @@ CONSOLE_ENABLE         = no
 #Combos!
 VPATH                  +=  keyboards/gboards/
 
+TAP_DANCE_ENABLE       = yes
+
 ifeq ($(strip $(DEBUG_MATRIX)), yes)
     OPT_DEFS += -DDEBUG_MATRIX
 endif
