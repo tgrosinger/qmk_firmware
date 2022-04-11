@@ -49,6 +49,7 @@ enum {
   SLSH_BSLS,
   SCLN_COLN,
   NUMB_TMUX,
+  EQL_GODEF,
 };
 
 // Tap Dance advanced fn states
@@ -62,20 +63,9 @@ enum {
 };
 
 // Tap Dance state
-typedef struct {
-  bool is_press_action;
-  int state;
-} tap;
-
-static tap numb_tmux_state = {
-  .is_press_action = true,
-  .state = 0
-};
-
-static tap scln_coln_state = {
-  .is_press_action = true,
-  .state = 0
-};
+static int numb_tmux_state = 0;
+static int scln_coln_state = 0;
+static int eql_godef_state = 0;
 
 // Tap Dance helpers
 
@@ -96,8 +86,8 @@ int cur_dance (qk_tap_dance_state_t *state) {
 }
 
 void numb_tmux_finished(qk_tap_dance_state_t *state, void *user_data) {
-  numb_tmux_state.state = cur_dance(state);
-  switch (numb_tmux_state.state) {
+  numb_tmux_state = cur_dance(state);
+  switch (numb_tmux_state) {
     case SINGLE_TAP:
       set_oneshot_layer(_TMUX, ONESHOT_START);
       clear_oneshot_layer_state(ONESHOT_PRESSED);
@@ -109,17 +99,17 @@ void numb_tmux_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void numb_tmux_reset(qk_tap_dance_state_t *state, void *user_data) {
-  switch (numb_tmux_state.state) {
+  switch (numb_tmux_state) {
     case SINGLE_HOLD:
       layer_off(_NUMB);
       break;
   }
-  numb_tmux_state.state = 0;
+  numb_tmux_state = 0;
 }
 
 void scln_coln_finished(qk_tap_dance_state_t *state, void *user_data) {
-  scln_coln_state.state = cur_dance(state);
-  switch (scln_coln_state.state) {
+  scln_coln_state = cur_dance(state);
+  switch (scln_coln_state) {
     case SINGLE_TAP:
       tap_code(KC_SCLN);
       break;
@@ -133,21 +123,41 @@ void scln_coln_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void scln_coln_reset(qk_tap_dance_state_t *state, void *user_data) {
-  switch(scln_coln_state.state) {
+  switch(scln_coln_state) {
     case SINGLE_HOLD:
       unregister_code(KC_LCTL);
       break;
   }
-  scln_coln_state.state = 0;
+  scln_coln_state = 0;
 }
 
+void eql_godef_finished(qk_tap_dance_state_t *state, void *user_data) {
+  eql_godef_state = cur_dance(state);
+  switch(eql_godef_state) {
+    case SINGLE_TAP:
+      tap_code(KC_EQL);
+      break;
+    case DOUBLE_TAP:
+      tap_code16(KC_COLN);
+      tap_code(KC_EQL);
+      break;
+  }
+}
+
+void eql_godef_reset(qk_tap_dance_state_t *state, void *user_data) {
+  eql_godef_state = 0;
+}
 
 // Tap Dance definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
     // Tap once for "/", twice for "\"
     [SLSH_BSLS] = ACTION_TAP_DANCE_DOUBLE(KC_SLSH, KC_BSLS),
+    // Tap once for ";", twice for ":", hold for ctrl
     [SCLN_COLN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, scln_coln_finished, scln_coln_reset),
+    // Tap once for one shot on the tmux layer, hold for the number layer
     [NUMB_TMUX] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, numb_tmux_finished, numb_tmux_reset),
+    // Tap once for "=", twice for ":="
+    [EQL_GODEF] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, eql_godef_finished, eql_godef_reset),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -313,14 +323,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       ),
   [_NUMB] = LAYOUT_split_3x5_3(
       KC_1,    KC_2,    KC_3,    KC_4,    KC_5,         KC_6,  KC_7, KC_8, KC_9,  KC_0,
-      KC_LCTL, KC_LT,   KC_LPRN, KC_RPRN, KC_GT,        KC_NO, KC_4, KC_5, KC_6,  KC_NO,
-      KC_LSFT, KC_LCBR, KC_LBRC, KC_RBRC, KC_RCBR,      KC_NO, KC_1, KC_2, KC_3,  KC_DOT,
+      KC_F1,   KC_F2,   KC_F12,  KC_F4,   KC_F5,        KC_NO, KC_4, KC_5, KC_6,  KC_COLN,
+      KC_LSFT, KC_NO,   KC_NO,   KC_NO,   KC_NO,        KC_NO, KC_1, KC_2, KC_3,  KC_DOT,
           KC_NO, KC_TRNS, DF(_ALPHA),                       DF(_NUMB), KC_0, KC_NO
       ),
   [_SYMB] = LAYOUT_split_3x5_3(
-      KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,     KC_CIRC, KC_AMPR, KC_ASTR, KC_PLUS, KC_EQL,
-      KC_LCTL, KC_NO,   KC_NO,   KC_HOME, KC_PGUP,     KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_NO,
-      KC_NO,   KC_NO,   KC_NO,   KC_END,  KC_PGDN,     KC_F1,   KC_F2,   KC_F4,   KC_F5,   KC_F12,
+      KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC,     KC_CIRC, KC_AMPR, KC_ASTR, KC_PLUS, TD(EQL_GODEF),
+      KC_LCTL, KC_LT,   KC_LPRN, KC_RPRN, KC_GT,       KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, KC_NO,
+      KC_NO,   KC_LCBR, KC_LBRC, KC_RBRC, KC_RCBR,     KC_HOME, KC_PGDN, KC_PGUP, KC_END,  KC_F12,
           KC_NO, KC_NO, DF(_ALPHA),                        DF(_SYMB),  KC_TRNS, KC_NO
       ),
   [_TMUX] = LAYOUT_split_3x5_3(
