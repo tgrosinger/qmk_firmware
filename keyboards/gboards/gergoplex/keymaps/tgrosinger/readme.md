@@ -10,3 +10,6 @@ This keymap I created for the GergoPlex with a focus on:
 
     util/docker_build.sh gboards/gergoplex:tgrosinger
     util/docker_build.sh gboards/gergoplex:tgrosinger:flash
+
+For WSL, it might be easier to install the QMK Toolbox, and copy the hex file over manually.
+

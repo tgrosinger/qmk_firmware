@@ -52,9 +52,7 @@ enum custom_keycodes {
 
 // Tap Dance declarations
 enum {
-  SLSH_BSLS,
   SCLN_COLN,
-  NUMB_TMUX,
   EQL_GODEF,
 };
 
@@ -69,7 +67,6 @@ enum {
 };
 
 // Tap Dance state
-static int numb_tmux_state = 0;
 static int scln_coln_state = 0;
 static int eql_godef_state = 0;
 
@@ -89,28 +86,6 @@ int cur_dance (qk_tap_dance_state_t *state) {
     else return TRIPLE_HOLD;
   }
   else return 8;
-}
-
-void numb_tmux_finished(qk_tap_dance_state_t *state, void *user_data) {
-  numb_tmux_state = cur_dance(state);
-  switch (numb_tmux_state) {
-    case SINGLE_TAP:
-      set_oneshot_layer(_TMUX, ONESHOT_START);
-      clear_oneshot_layer_state(ONESHOT_PRESSED);
-      break;
-    case SINGLE_HOLD:
-      layer_on(_NUMB);
-      break;
-  }
-}
-
-void numb_tmux_reset(qk_tap_dance_state_t *state, void *user_data) {
-  switch (numb_tmux_state) {
-    case SINGLE_HOLD:
-      layer_off(_NUMB);
-      break;
-  }
-  numb_tmux_state = 0;
 }
 
 void scln_coln_finished(qk_tap_dance_state_t *state, void *user_data) {
@@ -156,12 +131,8 @@ void eql_godef_reset(qk_tap_dance_state_t *state, void *user_data) {
 
 // Tap Dance definitions
 qk_tap_dance_action_t tap_dance_actions[] = {
-    // Tap once for "/", twice for "\"
-    [SLSH_BSLS] = ACTION_TAP_DANCE_DOUBLE(KC_SLSH, KC_BSLS),
     // Tap once for ";", twice for ":", hold for ctrl
     [SCLN_COLN] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, scln_coln_finished, scln_coln_reset),
-    // Tap once for one shot on the tmux layer, hold for the number layer
-    [NUMB_TMUX] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, numb_tmux_finished, numb_tmux_reset),
     // Tap once for "=", twice for ":="
     [EQL_GODEF] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, eql_godef_finished, eql_godef_reset),
 };
@@ -288,27 +259,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_ALPHA] = LAYOUT_split_3x5_3(
-      KC_Q,        KC_W, KC_E, KC_R, KC_T, /**/ KC_Y,        KC_U,        KC_I,        KC_O,        KC_P, 
-      CTL_T(KC_A), KC_S, KC_D, KC_F, KC_G, /**/ LT(0, KC_H), GUI_T(KC_J), ALT_T(KC_K), LT(0, KC_L), TD(SCLN_COLN),
-      KC_Z,        KC_X, KC_C, KC_V, KC_B, /**/ KC_N,        KC_M,        KC_COMM,     KC_DOT,      TD(SLSH_BSLS),
-      /**/ ___, TD(NUMB_TMUX), KC_LSFT, /*         */ KC_SPC, MO(_SYMB), ___
+      KC_Q,        KC_W, KC_E, KC_R, KC_T, /**/ KC_Y,        KC_U,        KC_I,        KC_O,        KC_P,
+      CTL_T(KC_A), KC_S, KC_D, KC_F, KC_G, /**/ KC_H,        KC_J,        KC_K,        KC_L,        TD(SCLN_COLN),
+      ALT_T(KC_Z), KC_X, KC_C, KC_V, KC_B, /**/ KC_N,        KC_M,        KC_COMM,     KC_DOT,      KC_SLSH,
+      /**/ ___, MO(_NUMB), KC_LSFT, /*         */ KC_SPC, MO(_SYMB), MO(_TMUX)
       ),
   [_NUMB] = LAYOUT_split_3x5_3(
       KC_1,  KC_2,  KC_3,    KC_4,    KC_5,  /**/ KC_6,  KC_7, KC_8, KC_9,  KC_0,
       ___,   LDSK,  G(KC_E), G(KC_R), RDSK,  /**/ ___, KC_4, KC_5, KC_6,  KC_COLN,
       KC_F1, KC_F2, KC_F12,  KC_F4,   KC_F5, /**/ ___, KC_1, KC_2, KC_3,  KC_DOT,
-      /**/ ___, KC_TRNS, DF(_ALPHA), /*               */ DF(_NUMB), KC_0, ___
+      /**/ ___, ___, ___, /*               */ ___, KC_0, KC_DOT
       ),
   [_SYMB] = LAYOUT_split_3x5_3(
       KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, /**/ KC_CIRC, KC_AMPR, KC_ASTR, KC_PLUS, TD(EQL_GODEF),
       KC_LCTL, KC_LT,   KC_LPRN, KC_RPRN, KC_GT,   /**/ KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, ___,
       ___,     KC_LCBR, KC_LBRC, KC_RBRC, KC_RCBR, /**/ KC_HOME, KC_PGDN, KC_PGUP, KC_END,  KC_F12,
-      /**/ ___, ___, DF(_ALPHA), /*                        */ DF(_SYMB),  KC_TRNS, ___
+      /**/ ___, ___, ___, /*                        */ ___,  ___, ___
       ),
   [_TMUX] = LAYOUT_split_3x5_3(
       VI_MACRO, VI_SAVE,   ___,   ___,        TX_SP_VT, /**/ VI_CLIP_CP, ___,      ___,      ___,      VI_CLIP_PST,
       ___,      TX_SCROLL, ___,   C(KC_TILD), ___,      /**/ TX_PN_LT,   TX_PN_DN, TX_PN_UP, TX_PN_RT, TX_SP_HZ,
       TX_ZOOM,  ___,       TX_NEW, ___,       ___,      /**/ TX_WN_LT,   ___,      ___,      TX_WN_RT, ___,
-      /**/ ___, KC_DEL, DF(_ALPHA), /*                                */ DF(_TMUX), KC_TRNS, ___
+      /**/ ___, KC_DEL, ___, /*                                */ ___, ___, ___
       ),
 };
